@@ -50,3 +50,12 @@ catenate :: Stack a -> Stack a -> Stack a
 catenate [] [] = []
 catenate [] (y:ys) = y : catenate [] ys
 catenate (x:xs) y = x : catenate xs y
+
+-- suffixes can simple create pointers to successive elements in the
+-- list, and only has to iterate through the list to do so.
+-- For example:
+--     [1,2,3,4] ->[(pointer to list starting at 0), (pointer to list
+--     starting at 1)], etc...
+suffixes :: Stack a -> Stack (Stack a)
+suffixes [] = cons empty empty
+suffixes (x:xs) = cons (cons x xs) $ suffixes xs
