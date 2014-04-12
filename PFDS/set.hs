@@ -17,21 +17,28 @@ end
 -}
 module Set where
 
-data Tree a = Empty | Tree { right :: Tree a
+data Tree a = Empty | Tree { left :: Tree a
                              ,value :: a
-                             ,left :: Tree a
+                             ,right :: Tree a
 } deriving Show
 
 member :: (Ord a) => a -> Tree a -> Bool
 member _ Empty = False
-member x t
-  | x == value t = True
-  | x < value t = member x $ right t
-  | x > value t = member x $ left t
+member x (Tree l v r)
+  | x == v = True
+  | x < v = member x l
+  | x > v = member x r
 
 insert :: (Ord a) => a -> Tree a -> Tree a
 insert x Empty = Tree Empty x Empty
-insert x t
-  | x == value t = t
-  | x < value t = Tree (insert x $ right t) (value t) (left t)
-  | x > value t = Tree (right t) (value t) (insert x $ left t)
+insert x (Tree l v r)
+  | x == v = Tree l v r
+  | x < v = Tree (insert x l) v r
+  | x > v = Tree l x (insert x l)
+
+fromList :: (Ord a) => [a] -> Tree a
+fromList [] = Empty
+fromList x = treeList Empty x
+  where treeList t [] = t
+        treeList t (x:xs) = treeList (insert x t) xs
+        
