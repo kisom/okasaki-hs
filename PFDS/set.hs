@@ -17,6 +17,8 @@ end
 -}
 module Set where
 
+import qualified Data.List as List
+
 data Tree a = Empty | Tree { left :: Tree a
                              ,value :: a
                              ,right :: Tree a
@@ -34,7 +36,7 @@ insert x Empty = Tree Empty x Empty
 insert x (Tree l v r)
   | x == v = Tree l v r
   | x < v = Tree (insert x l) v r
-  | x > v = Tree l x (insert x l)
+  | x > v = Tree l v (insert x r)
 
 fromList :: (Ord a) => [a] -> Tree a
 fromList [] = Empty
@@ -42,3 +44,7 @@ fromList x = treeList Empty x
   where treeList t [] = t
         treeList t (x:xs) = treeList (insert x t) xs
         
+members :: (Ord a) => Tree a -> [a]
+members t = List.sort $ unrollTree t
+  where unrollTree Empty = []
+        unrollTree (Tree l v r) = v : (unrollTree l) ++ (unrollTree r)
